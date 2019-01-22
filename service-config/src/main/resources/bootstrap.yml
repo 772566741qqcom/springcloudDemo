@@ -1,0 +1,38 @@
+server:
+  port: ${port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+# https://www.cnblogs.com/baidawei/p/9183531.html
+# auditevents beans conditions health env info metrics mappings
+
+spring:
+  application:
+    name: service-config
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        register: true
+        hostname: 127.0.0.1
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 15s
+        instance-id: ${spring.application.name}:${server.port}
+        tags: ${spring.application.name}:${server.port}:${random.value}
+      config:
+        enabled: true #false禁用Consul配置，默认true
+        format: YAML    # 表示consul上面文件的格式 有四种 YAML PROPERTIES KEY-VALUE FILES
+        #data-key: configuration    #表示consul上面的KEY值(或者说文件的名字) 默认是data
+        data-key: data    #表示consul上面的KEY值(或者说文件的名字) 默认是data
+        #prefix设置配置值的基本文件夹
+        #defaultContext设置所有应用程序使用的文件夹名称
+        #profileSeparator设置用于使用配置文件在属性源中分隔配置文件名称的分隔符的值
+  profiles:
+    active: dev

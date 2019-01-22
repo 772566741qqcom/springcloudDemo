@@ -1,0 +1,44 @@
+server:
+  port: 8799
+  http2:
+    enabled: true
+  servlet:
+    context-path: /i5xforyou
+
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    gateway:
+      routes:
+      - id: api-a
+        uri: lb://service-feign
+        predicates:
+        - Path=/api-a/**
+        filters:
+        - StripPrefix=1
+      - id: api-b
+        uri: lb://client-hi
+        predicates:
+        - Path=/api-b/**
+        filters:
+        - StripPrefix=1
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        register: true
+        hostname: 127.0.0.1
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 15s
+        instance-id: ${spring.application.name}:${server.port}
+        tags: ${spring.application.name}:${server.port}:${random.value}
+
+
+# uri\u4EE5lb://\u5F00\u5934\uFF08lb\u4EE3\u8868\u4ECE\u6CE8\u518C\u4E2D\u5FC3\u83B7\u53D6\u670D\u52A1\uFF09\uFF0C\u540E\u9762\u63A5\u7684\u5C31\u662F\u4F60\u9700\u8981\u8F6C\u53D1\u5230\u7684\u670D\u52A1\u540D\u79F0\uFF0C
+# \u8FD9\u4E2A\u670D\u52A1\u540D\u79F0\u5FC5\u987B\u8DDFeureka\u4E2D\u7684\u5BF9\u5E94\uFF0C\u5426\u5219\u4F1A\u627E\u4E0D\u5230\u670D\u52A1
+#id\uFF1A\u56FA\u5B9A\uFF0C\u4E0D\u540C id \u5BF9\u5E94\u4E0D\u540C\u7684\u529F\u80FD\uFF0C\u53EF\u53C2\u8003 \u5B98\u65B9\u6587\u6863
+#uri\uFF1A\u76EE\u6807\u670D\u52A1\u5730\u5740
+#predicates\uFF1A\u8DEF\u7531\u6761\u4EF6
+#filters\uFF1A\u8FC7\u6EE4\u89C4\u5219
+# \u52A0\u4E0AStripPrefix=1 \u53BB\u6389api-a\uFF0C\u53EA\u4FDD\u7559**\u90E8\u5206

@@ -1,0 +1,23 @@
+server:
+  port: 8904
+
+spring:
+  application:
+    name: service-zuul
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        register: true
+        hostname: 127.0.0.1
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 15s
+        instance-id: ${spring.application.name}:${server.port}
+        tags: ${spring.application.name}:${server.port}:${random.value}
+
+zuul:
+  routes:
+    hi:
+      path: /hi/**
+      serviceId: client-hi

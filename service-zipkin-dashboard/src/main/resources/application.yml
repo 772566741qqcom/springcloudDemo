@@ -1,0 +1,25 @@
+server:
+  port: 17601
+
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: false
+
+spring:
+  application:
+    name: service-zipkin-dashboard
+ # zipkin:
+ #   enabled: true
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        register: true
+        hostname: 127.0.0.1
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 15s
+        instance-id: ${spring.application.name}:${server.port}
+        tags: ${spring.application.name}:${server.port}:${random.value}
